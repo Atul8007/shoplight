@@ -2,7 +2,7 @@
 
 client_id = "2b13a35f7da32d0b0846c90cb22b5694"
 name = "shoplight"
-application_url = "http://localhost:3000"
+application_url = "https://shopify.dev/apps/default-app-home"
 embedded = true
 
 [build]
@@ -18,14 +18,10 @@ api_version = "2026-10"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
-scopes = "read_products"
+scopes = ""
 
 [auth]
-redirect_urls = [
-  "http://localhost:3000/auth/callback",
-  "http://localhost:3000/auth/shopify/callback",
-  "http://localhost:3000/api/auth/callback"
-]
+redirect_urls = [ "https://shopify.dev/apps/default-app-home/api/auth" ]
 
 [pos]
 embedded = false

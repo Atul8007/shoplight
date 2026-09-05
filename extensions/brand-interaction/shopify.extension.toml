@@ -1,4 +1,5 @@
 api_version = "2026-07"
+uid = "cde96c82-325f-dcfd-cf72-980354d1ba1d9bf357ee"
 
 [[extensions]]
 name = "Brand Interaction"
