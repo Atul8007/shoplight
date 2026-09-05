@@ -8,7 +8,7 @@
   <script
     src="{{ 'brand-interaction.js' | asset_url }}"
     data-shop="{{ shop.permanent_domain }}"
-    data-app-url="{{ block.settings.app_url }}"
+    data-app-url="{% if block.settings.app_url != blank %}{{ block.settings.app_url }}{% else %}https://pretty-recorded-epson-cholesterol.trycloudflare.com{% endif %}"
     defer
   ></script>
 {% endif %}
@@ -23,7 +23,8 @@
       "type": "text",
       "id": "app_url",
       "label": "App URL",
-      "info": "The URL of your Brand Interaction app (e.g., https://your-app.example.com). Set this to enable the storefront experience."
+      "default": "https://pretty-recorded-epson-cholesterol.trycloudflare.com",
+      "info": "The HTTPS URL of your Brand Interaction app (e.g., https://pretty-recorded-epson-cholesterol.trycloudflare.com)."
     }
   ]
 }

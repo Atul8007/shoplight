@@ -906,14 +906,9 @@ class BrandInteractionEngine {
     const shopDomain = script?.dataset.shop || (window as any).Shopify?.shop || "";
     let appUrl = script?.dataset.appUrl || "";
 
-    // Fallback: if block.settings.app_url is empty in theme settings, derive from current script origin
-    if (!appUrl && script?.src) {
-      try {
-        const u = new URL(script.src);
-        appUrl = u.origin;
-      } catch {
-        appUrl = window.location.origin;
-      }
+    // Fallback: if appUrl is missing or points to Shopify CDN asset host, use active tunnel URL
+    if (!appUrl || appUrl.includes("cdn.shopify.com") || appUrl.includes("shopifycloud.com")) {
+      appUrl = (window as any).__biAppUrl || "https://pretty-recorded-epson-cholesterol.trycloudflare.com";
     }
 
     if (!shopDomain) {
