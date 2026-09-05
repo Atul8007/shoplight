@@ -269,9 +269,17 @@ export default function ExperienceEditor() {
                   <Text as="h2" variant="headingMd">Cursor</Text>
                   <Select label="Type" options={CURSOR_TYPE_OPTIONS} value={cursorType} onChange={(v) => setCursorType(v as ExperienceConfiguration["cursor"]["type"])} />
                   <RangeSlider label={`Size: ${cursorSize}px`} value={cursorSize} min={4} max={96} onChange={(v) => setCursorSize(v as number)} output />
-                  <TextField label="Color" value={cursorColor} onChange={setCursorColor} autoComplete="off"
-                    prefix={<div style={{ width: 20, height: 20, borderRadius: 4, backgroundColor: cursorColor, border: "1px solid #ccc" }} />}
-                  />
+                  <InlineStack gap="300" blockAlign="end">
+                    <div style={{ flex: 1 }}>
+                      <TextField label="Color (Hex)" value={cursorColor} onChange={setCursorColor} autoComplete="off" prefix="#" />
+                    </div>
+                    <input
+                      type="color"
+                      value={cursorColor.startsWith("#") ? cursorColor : `#${cursorColor}`}
+                      onChange={(e) => setCursorColor(e.target.value)}
+                      style={{ width: 42, height: 38, border: "none", cursor: "pointer", borderRadius: 4 }}
+                    />
+                  </InlineStack>
                   <RangeSlider label={`Opacity: ${cursorOpacity}`} value={cursorOpacity} min={0} max={1} step={0.05} onChange={(v) => setCursorOpacity(v as number)} output />
                   <Select label="Blend Mode" options={BLEND_MODE_OPTIONS} value={blendMode} onChange={(v) => setBlendMode(v as ExperienceConfiguration["cursor"]["blendMode"])} />
                   {cursorType === "emoji" && (
