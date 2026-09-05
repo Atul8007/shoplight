@@ -665,12 +665,6 @@ class BrandInteractionEngine {
       this.renderer = new CursorRenderer(this.config.cursor);
       this.renderer.startRenderLoop();
 
-      // Hide default cursor
-      const cursorStyle = document.createElement("style");
-      cursorStyle.id = "bi-cursor-hide";
-      cursorStyle.textContent = "* { cursor: none !important; }";
-      document.head.appendChild(cursorStyle);
-
       // Initialize trail (if enabled and motion not reduced)
       if (this.config.motion.trail && !shouldReduceMotion && this.config.motion.trailLength > 0) {
         this.renderer.enableTrail(this.config.motion.trailLength);
@@ -701,11 +695,36 @@ class BrandInteractionEngine {
   private attachListeners(reducedMotion: boolean): void {
     if (!this.config || !this.renderer) return;
 
-    // Mouse movement — only update latest position
+    let hasMovedMouse = false;
+
+    const hideDefaultCursor = () => {
+      if (!document.getElementById("bi-cursor-hide")) {
+        const style = document.createElement("style");
+        style.id = "bi-cursor-hide";
+        style.textContent = "html, body, a, button, input, select, textarea { cursor: none !important; }";
+        document.head.appendChild(style);
+      }
+    };
+
+    const restoreDefaultCursor = () => {
+      document.getElementById("bi-cursor-hide")?.remove();
+    };
+
+    // Mouse movement — only hide native cursor once mouse starts moving
     const onMouseMove = (e: MouseEvent) => {
+      if (!hasMovedMouse) {
+        hasMovedMouse = true;
+        hideDefaultCursor();
+      }
       this.renderer!.updatePosition(e.clientX, e.clientY);
     };
     this.addListener(document, "mousemove", onMouseMove as EventListener, { passive: true });
+
+    // Restore native cursor when mouse leaves browser window
+    this.addListener(document, "mouseleave", restoreDefaultCursor as EventListener, { passive: true });
+    this.addListener(document, "mouseenter", (() => {
+      if (hasMovedMouse) hideDefaultCursor();
+    }) as EventListener, { passive: true });
 
     // Mouse enter — evaluate rules
     const onMouseOver = (e: MouseEvent) => {
