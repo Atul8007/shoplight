@@ -1,6 +1,6 @@
 name = "Shoplight"
-client_id = "${SHOPIFY_API_KEY}"
-application_url = "${SHOPIFY_APP_URL}"
+client_id = ""
+application_url = "http://localhost:3000"
 embedded = true
 
 [access_scopes]
