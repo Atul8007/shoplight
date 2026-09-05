@@ -904,10 +904,20 @@ class BrandInteractionEngine {
     // Read bootstrap data from the embed block's script tag
     const script = document.currentScript as HTMLScriptElement | null;
     const shopDomain = script?.dataset.shop || (window as any).Shopify?.shop || "";
-    const appUrl = script?.dataset.appUrl || "";
+    let appUrl = script?.dataset.appUrl || "";
 
-    if (!shopDomain || !appUrl) {
-      console.warn("[BrandInteraction] Missing shop domain or app URL");
+    // Fallback: if block.settings.app_url is empty in theme settings, derive from current script origin
+    if (!appUrl && script?.src) {
+      try {
+        const u = new URL(script.src);
+        appUrl = u.origin;
+      } catch {
+        appUrl = window.location.origin;
+      }
+    }
+
+    if (!shopDomain) {
+      console.warn("[BrandInteraction] Missing shop domain");
       return;
     }
 
