@@ -4,6 +4,7 @@ import { createReadableStreamFromReadable } from "@remix-run/node";
 import { RemixServer } from "@remix-run/react";
 import { isbot } from "isbot";
 import { renderToPipeableStream } from "react-dom/server";
+import { addDocumentResponseHeaders } from "./shopify.server";
 
 export default function handleRequest(
   request: Request,
@@ -21,6 +22,7 @@ export default function handleRequest(
       [callbackName]: () => {
         shellRendered = true;
         const body = new PassThrough();
+        addDocumentResponseHeaders(request, responseHeaders);
         responseHeaders.set("Content-Type", "text/html");
         resolve(new Response(createReadableStreamFromReadable(body), { headers: responseHeaders, status: responseStatusCode }));
         pipe(body);
