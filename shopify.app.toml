@@ -1,8 +1,8 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
-name = "shoplight"
 client_id = "2b13a35f7da32d0b0846c90cb22b5694"
-application_url = "http://localhost:3000"
+name = "shoplight"
+application_url = "https://example.com"
 embedded = true
 
 [build]
