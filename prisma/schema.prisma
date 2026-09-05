@@ -1,0 +1,232 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ShopStatus {
+  ACTIVE
+  INACTIVE
+  UNINSTALLED
+}
+
+enum BillingPlan {
+  FREE
+  STARTER
+  GROWTH
+  PRO
+}
+
+enum BrandStyle {
+  minimal
+  luxury
+  playful
+  futuristic
+  organic
+  bold
+  custom
+}
+
+enum ExperienceStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum AssetType {
+  CURSOR
+  LOGO
+  EFFECT
+  OTHER
+}
+
+enum AssetStatus {
+  PENDING
+  READY
+  REJECTED
+}
+
+model Session {
+  id            String    @id
+  shop          String
+  state         String
+  isOnline      Boolean   @default(false)
+  scope         String?
+  expires       DateTime?
+  accessToken   String
+  userId        BigInt?
+  firstName     String?
+  lastName      String?
+  email         String?
+  accountOwner  Boolean   @default(false)
+  locale        String?
+  collaborator  Boolean?  @default(false)
+  emailVerified Boolean?  @default(false)
+}
+
+model Shop {
+  id                    String                 @id @default(cuid())
+  shopifyShopId         String                 @unique @map("shopify_shop_id")
+  shopDomain            String                 @unique @map("shop_domain")
+  encryptedAccessToken  String?                @map("encrypted_access_token")
+  status                ShopStatus             @default(ACTIVE)
+  plan                  BillingPlan            @default(FREE)
+  createdAt             DateTime               @default(now()) @map("created_at")
+  updatedAt             DateTime               @updatedAt @map("updated_at")
+  brandProfile          BrandProfile?
+  experiences           Experience[]
+  assets                Asset[]
+  analyticsSessions     AnalyticsSession[]
+  analyticsEvents       AnalyticsEvent[]
+  analyticsDailyMetrics AnalyticsDailyMetric[]
+
+  @@map("shops")
+}
+
+model BrandProfile {
+  id             String     @id @default(cuid())
+  shopId         String     @unique @map("shop_id")
+  logoUrl        String?    @map("logo_url")
+  primaryColor   String     @default("#111111") @map("primary_color")
+  secondaryColor String     @default("#FFFFFF") @map("secondary_color")
+  accentColor    String     @default("#FFFFFF") @map("accent_color")
+  style          BrandStyle @default(minimal)
+  createdAt      DateTime   @default(now()) @map("created_at")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  shop           Shop       @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@map("brand_profiles")
+}
+
+model Experience {
+  id                     String              @id @default(cuid())
+  shopId                 String              @map("shop_id")
+  name                   String
+  description            String?
+  status                 ExperienceStatus    @default(DRAFT)
+  version                Int                 @default(0)
+  draftConfiguration     Json                @map("draft_configuration")
+  publishedConfiguration Json?               @map("published_configuration")
+  createdAt              DateTime            @default(now()) @map("created_at")
+  updatedAt              DateTime            @updatedAt @map("updated_at")
+  publishedAt            DateTime?           @map("published_at")
+  shop                   Shop                @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  versions               ExperienceVersion[]
+  rules                  ExperienceRule[]
+  analyticsSessions      AnalyticsSession[]
+  analyticsEvents        AnalyticsEvent[]
+  analyticsDailyMetrics  AnalyticsDailyMetric[]
+
+  @@index([shopId])
+  @@index([shopId, status])
+  @@map("experiences")
+}
+
+model ExperienceVersion {
+  id            String     @id @default(cuid())
+  experienceId  String     @map("experience_id")
+  version       Int
+  configuration Json
+  createdAt     DateTime   @default(now()) @map("created_at")
+  publishedAt   DateTime   @default(now()) @map("published_at")
+  experience    Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  @@unique([experienceId, version])
+  @@index([experienceId])
+  @@map("experience_versions")
+}
+
+model ExperienceRule {
+  id           String     @id @default(cuid())
+  experienceId String     @map("experience_id")
+  name         String
+  priority     Int        @default(0)
+  condition    Json
+  action       Json
+  enabled      Boolean    @default(true)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  experience   Experience @relation(fields: [experienceId], references: [id], onDelete: Cascade)
+
+  @@index([experienceId])
+  @@index([experienceId, enabled, priority])
+  @@map("experience_rules")
+}
+
+model Asset {
+  id           String      @id @default(cuid())
+  shopId       String      @map("shop_id")
+  type         AssetType
+  originalName String      @map("original_name")
+  storageKey   String      @map("storage_key")
+  cdnUrl       String      @map("cdn_url")
+  mimeType     String      @map("mime_type")
+  fileSize     Int         @map("file_size")
+  width        Int?
+  height       Int?
+  status       AssetStatus @default(PENDING)
+  createdAt    DateTime    @default(now()) @map("created_at")
+  shop         Shop        @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@map("assets")
+}
+
+model AnalyticsSession {
+  id                 String      @id @default(cuid())
+  shopId             String      @map("shop_id")
+  experienceId       String?     @map("experience_id")
+  anonymousSessionId String      @map("anonymous_session_id")
+  deviceType         String      @map("device_type")
+  pageType           String?     @map("page_type")
+  startedAt          DateTime    @default(now()) @map("started_at")
+  endedAt            DateTime?   @map("ended_at")
+  shop               Shop        @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  experience         Experience? @relation(fields: [experienceId], references: [id], onDelete: SetNull)
+
+  @@index([shopId])
+  @@index([anonymousSessionId])
+  @@map("analytics_sessions")
+}
+
+model AnalyticsEvent {
+  id                 String      @id @default(cuid())
+  shopId             String      @map("shop_id")
+  experienceId       String?     @map("experience_id")
+  anonymousSessionId String      @map("anonymous_session_id")
+  eventType          String      @map("event_type")
+  pageType           String?     @map("page_type")
+  elementType        String?     @map("element_type")
+  metadata           Json?
+  occurredAt         DateTime    @default(now()) @map("occurred_at")
+  shop               Shop        @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  experience         Experience? @relation(fields: [experienceId], references: [id], onDelete: SetNull)
+
+  @@index([shopId, occurredAt])
+  @@index([anonymousSessionId])
+  @@map("analytics_events")
+}
+
+model AnalyticsDailyMetric {
+  id               String      @id @default(cuid())
+  shopId           String      @map("shop_id")
+  experienceId     String?     @map("experience_id")
+  date             DateTime
+  pageType         String?     @map("page_type")
+  elementType      String?     @map("element_type")
+  hoverCount       Int         @default(0) @map("hover_count")
+  clickCount       Int         @default(0) @map("click_count")
+  interactionCount Int         @default(0) @map("interaction_count")
+  sessionCount     Int         @default(0) @map("session_count")
+  shop             Shop        @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  experience       Experience? @relation(fields: [experienceId], references: [id], onDelete: SetNull)
+
+  @@unique([shopId, experienceId, date, pageType, elementType])
+  @@index([shopId, date])
+  @@map("analytics_daily_metrics")
+}
+

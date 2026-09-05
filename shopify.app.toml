@@ -1,0 +1,29 @@
+name = "Shoplight"
+client_id = "${SHOPIFY_API_KEY}"
+application_url = "${SHOPIFY_APP_URL}"
+embedded = true
+
+[access_scopes]
+scopes = "read_products"
+
+[auth]
+redirect_urls = [
+  "${SHOPIFY_APP_URL}/auth/callback",
+  "${SHOPIFY_APP_URL}/auth/shopify/callback",
+  "${SHOPIFY_APP_URL}/api/auth/callback"
+]
+
+[webhooks]
+api_version = "2026-07"
+
+[[webhooks.subscriptions]]
+topics = [ "app/uninstalled" ]
+uri = "/webhooks/app/uninstalled"
+
+[pos]
+embedded = false
+
+[build]
+automatically_update_urls_on_dev = true
+dev_store_url = ""
+

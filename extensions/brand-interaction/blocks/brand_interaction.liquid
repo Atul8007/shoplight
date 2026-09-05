@@ -1,0 +1,30 @@
+{% comment %}
+  Brand Interaction Engine — App Embed Block
+  This block bootstraps the lightweight storefront runtime.
+  No business logic resides in Liquid — all interaction logic lives in the JS engine.
+{% endcomment %}
+
+{% if shop %}
+  <script
+    src="{{ 'brand-interaction.js' | asset_url }}"
+    data-shop="{{ shop.permanent_domain }}"
+    data-app-url="{{ block.settings.app_url }}"
+    defer
+  ></script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Brand Interaction",
+  "target": "head",
+  "javascript": "brand-interaction.js",
+  "settings": [
+    {
+      "type": "text",
+      "id": "app_url",
+      "label": "App URL",
+      "info": "The URL of your Brand Interaction app (e.g., https://your-app.example.com). Set this to enable the storefront experience."
+    }
+  ]
+}
+{% endschema %}

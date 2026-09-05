@@ -1,0 +1,13 @@
+api_version = "2026-07"
+
+[[extensions]]
+name = "Brand Interaction"
+handle = "brand-interaction"
+type = "theme"
+
+  [extensions.capabilities]
+  block_progress = false
+
+  [[extensions.targeting]]
+  module = "./blocks/brand_interaction.liquid"
+  target = "head"

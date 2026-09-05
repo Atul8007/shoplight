@@ -1,0 +1,12 @@
+{
+  "en": {
+    "default": {
+      "name": "Brand Interaction",
+      "settings": {
+        "app_url": {
+          "label": "App URL"
+        }
+      }
+    }
+  }
+}
