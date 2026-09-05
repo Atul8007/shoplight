@@ -2,7 +2,7 @@
 
 client_id = "2b13a35f7da32d0b0846c90cb22b5694"
 name = "shoplight"
-application_url = "https://overall-noticed-belkin-nashville.trycloudflare.com"
+application_url = "https://pretty-recorded-epson-cholesterol.trycloudflare.com"
 embedded = true
 
 [build]
@@ -12,7 +12,7 @@ automatically_update_urls_on_dev = true
 api_version = "2026-10"
 
   [[webhooks.subscriptions]]
-  uri = "https://overall-noticed-belkin-nashville.trycloudflare.com/webhooks/app/uninstalled"
+  uri = "https://pretty-recorded-epson-cholesterol.trycloudflare.com/webhooks/app/uninstalled"
   topics = [ "app/uninstalled" ]
 
 [access_scopes]
@@ -21,9 +21,9 @@ scopes = "read_products"
 
 [auth]
 redirect_urls = [
-  "https://overall-noticed-belkin-nashville.trycloudflare.com/auth/callback",
-  "https://overall-noticed-belkin-nashville.trycloudflare.com/auth/shopify/callback",
-  "https://overall-noticed-belkin-nashville.trycloudflare.com/api/auth/callback"
+  "https://pretty-recorded-epson-cholesterol.trycloudflare.com/auth/callback",
+  "https://pretty-recorded-epson-cholesterol.trycloudflare.com/auth/shopify/callback",
+  "https://pretty-recorded-epson-cholesterol.trycloudflare.com/api/auth/callback"
 ]
 
 [pos]

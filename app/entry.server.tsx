@@ -22,7 +22,11 @@ export default function handleRequest(
       [callbackName]: () => {
         shellRendered = true;
         const body = new PassThrough();
-        addDocumentResponseHeaders(request, responseHeaders);
+        const absoluteUrl = request.url.startsWith("http")
+          ? request.url
+          : `${process.env.SHOPIFY_APP_URL || "http://localhost:3000"}${request.url.startsWith("/") ? "" : "/"}${request.url}`;
+        const reqForHeaders = request.url.startsWith("http") ? request : new Request(absoluteUrl, request);
+        addDocumentResponseHeaders(reqForHeaders, responseHeaders);
         responseHeaders.set("Content-Type", "text/html");
         resolve(new Response(createReadableStreamFromReadable(body), { headers: responseHeaders, status: responseStatusCode }));
         pipe(body);

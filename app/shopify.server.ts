@@ -18,7 +18,18 @@ const shopify = shopifyApp({
 
 export default shopify;
 export const apiVersion = ApiVersion.July26;
-export const addDocumentResponseHeaders = shopify.addDocumentResponseHeaders;
+export const addDocumentResponseHeaders = (request: Request, headers: Headers) => {
+  try {
+    const rawUrl = request.url || "/";
+    const url = rawUrl.startsWith("http")
+      ? rawUrl
+      : `${process.env.SHOPIFY_APP_URL || "http://localhost:3000"}${rawUrl.startsWith("/") ? "" : "/"}${rawUrl}`;
+    const req = new Request(url, { headers: request.headers, method: request.method });
+    return shopify.addDocumentResponseHeaders(req, headers);
+  } catch (e) {
+    console.warn("Failed to add document response headers:", e);
+  }
+};
 export const authenticate = shopify.authenticate;
 export const unauthenticated = shopify.unauthenticated;
 export const login = shopify.login;
