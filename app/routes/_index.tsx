@@ -6,7 +6,7 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
 
   if (url.searchParams.get("shop")) {
-    throw await authenticate.admin(request);
+    await authenticate.admin(request);
   }
 
   return redirect(`/app?${url.searchParams.toString()}`);
